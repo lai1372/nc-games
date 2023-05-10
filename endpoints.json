@@ -31,5 +31,34 @@
         }
       ]
     }
+  },
+  "GET /api/comments": {
+    "description": "serves an array of all comments",
+    "queries": ["sort_by", "author"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "I loved this game too!",
+          "votes": 16,
+          "author": "happyamy2016",
+          "review_id": 2,
+          "created_at": "new Date(1511354163389)"
+        }
+      ]
+    }
+  },
+
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": ["name", "username"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "username": "tickle122",
+          "name": "Tom Tickle",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        }
+      ]
+    }
   }
 }
