@@ -1,11 +1,11 @@
 const { fetchCategories } = require("../models/categories.models");
 
-exports.getCategories = (request, response) => {
+exports.getCategories = (request, response, next) => {
   fetchCategories()
-    .then((result) => {
-      response.status(200).send({ result: result });
+    .then((categories) => {
+      response.status(200).send({ categories: categories });
     })
-    .catch(() => {
-      response.status(500).send({ msg: "An internal error has occurred" });
+    .catch((err) => {
+      next(err)
     });
 };

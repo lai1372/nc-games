@@ -21,7 +21,7 @@ describe("GET - /api/categories", () => {
       .get("/api/categories")
       .expect(200)
       .then((result) => {
-        const categories = result.body.result;
+        const categories = result.body.categories;
         expect(categories.length).toBe(4);
         return categories.forEach((category) => {
           expect(typeof category.slug).toBe("string");
@@ -117,6 +117,7 @@ describe("GET - /api/reviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then((result) => {
+        expect(result.body.reviews.length).toBe(13)
         return result.body.reviews.forEach((review) => {
           expect(typeof review.owner).toBe("string");
           expect(typeof review.title).toBe("string");
@@ -145,6 +146,7 @@ describe("GET - /api/reviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then((result) => {
+        expect(result.body.reviews.length).toBe(13)
         return result.body.reviews.forEach((review) => {
           expect(review).not.toHaveProperty("review_body");
         });
