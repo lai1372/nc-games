@@ -37,7 +37,7 @@ describe("GET - 404 endpoint not found", () => {
       .get("/api/random")
       .expect(404)
       .then((result) => {
-        expect(result.body.msg).toEqual("404 path not found!");
+        expect(result.body.msg).toEqual("404 - Path not found!");
       });
   });
 });
@@ -117,7 +117,7 @@ describe("GET - /api/reviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then((result) => {
-        expect(result.body.reviews.length).toBe(13)
+        expect(result.body.reviews.length).toBe(13);
         return result.body.reviews.forEach((review) => {
           expect(typeof review.owner).toBe("string");
           expect(typeof review.title).toBe("string");
@@ -146,7 +146,7 @@ describe("GET - /api/reviews", () => {
       .get("/api/reviews")
       .expect(200)
       .then((result) => {
-        expect(result.body.reviews.length).toBe(13)
+        expect(result.body.reviews.length).toBe(13);
         return result.body.reviews.forEach((review) => {
           expect(review).not.toHaveProperty("review_body");
         });
@@ -157,7 +157,54 @@ describe("GET - /api/reviews", () => {
       .get("/api/notreviews")
       .expect(404)
       .then((result) => {
-        expect(result.body.msg).toBe("404 path not found!");
+        expect(result.body.msg).toBe("404 - Path not found!");
+      });
+  });
+});
+
+describe("GET - /api/reviews/:review_id/comments", () => {
+  test("should return status 200 along with an array with correct properties", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then((comments) => {
+        const commentsArray = comments.body.comments;
+        expect(Array.isArray(commentsArray)).toBe(true);
+        expect(commentsArray.length).toBe(3);
+        return commentsArray.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.review_id).toBe("number");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+        });
+      });
+  });
+  test("should be sorted by created in ascending order", () => {
+    return request(app)
+      .get("/api/reviews/3/comments")
+      .expect(200)
+      .then((comments) => {
+        expect(comments.body.comments).toBeSortedBy("created_at");
+      });
+  });
+  test("should return a 404 error if the correct data type for review ID is added, but there are no corresponding comments", () => {
+    return request(app)
+      .get("/api/reviews/21/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "404 - no comments found with this review ID"
+        );
+      });
+  });
+  test("should return a 400 error if the data type for review ID is invalid", () => {
+    return request(app)
+      .get("/api/reviews/notavalidid/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("400 - Bad Request!");
       });
   });
 });

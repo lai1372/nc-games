@@ -13,10 +13,10 @@ exports.getReviewsById = (request, response, next) => {
 
 exports.getReviews = (request, response, next) => {
   fetchReviews()
-  .then((reviews) => {
-    response.status(200).send({ reviews: reviews });
-  })
-  .catch((err) => {
-    next(err)
-  })
+    .then((reviews) => {
+      response.status(200).send({ reviews: reviews });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
