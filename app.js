@@ -3,8 +3,12 @@ const { getCategories } = require("./controllers/categories.controllers.js");
 const {
   getReviewsById,
   getReviews,
+  getReviewIdComments,
 } = require("./controllers/reviews.controllers.js");
 const { getEndpoints } = require("./controllers/endpoints.controllers.js");
+const {
+  getCommentsByReviewId,
+} = require("./controllers/comments.controllers.js");
 const app = express();
 
 app.use(express.json());
@@ -15,10 +19,12 @@ app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewsById);
 
+app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
+
 app.get("/api", getEndpoints);
 
 app.all("*", (request, response) => {
-  response.status(404).send({ msg: "404 path not found!" });
+  response.status(404).send({ msg: "404 - Path not found!" });
 });
 
 app.use((err, request, response, next) => {
@@ -38,7 +44,7 @@ app.use((err, request, response, next) => {
 });
 
 app.use((err, request, response, next) => {
-  response.status(500).send({ msg: "a server error has occurred!" });
+  response.status(500).send({ msg: "500 - A server error has occurred!" });
 });
 
 module.exports = app;
