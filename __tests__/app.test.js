@@ -5,6 +5,7 @@ const data = require("../db/data/test-data/index.js");
 const db = require("../db/connection.js");
 const { expect, test } = require("@jest/globals");
 const endpoints = require("../endpoints.json");
+const jestSorted = require("jest-sorted");
 
 beforeEach(() => {
   return seed(data);
@@ -98,6 +99,63 @@ describe("GET - /api/reviews/:review_id", () => {
       .then((result) => {
         const message = result.body.msg;
         expect(message).toBe("ID not found!");
+      });
+  });
+});
+
+describe("GET - /api/reviews", () => {
+  test("should return an array", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then((result) => {
+        expect(Array.isArray(result.body.reviews)).toBe(true);
+      });
+  });
+  test("should contain the correct keys and type of values for each review including an additional key of 'comment_count'", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then((result) => {
+        return result.body.reviews.forEach((review) => {
+          expect(typeof review.owner).toBe("string");
+          expect(typeof review.title).toBe("string");
+          expect(typeof review.review_id).toBe("number");
+          expect(typeof review.category).toBe("string");
+          expect(typeof review.review_img_url).toBe("string");
+          expect(typeof review.created_at).toBe("string");
+          expect(typeof review.votes).toBe("number");
+          expect(typeof review.designer).toBe("string");
+          expect(typeof review.comment_count).toBe("number");
+        });
+      });
+  });
+  test("should be sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then((result) => {
+        expect(result.body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("should not have a key of 'review_body' on any of the reviews", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then((result) => {
+        return result.body.reviews.forEach((review) => {
+          expect(review).not.toHaveProperty("review_body");
+        });
+      });
+  });
+  test("should return a 404 error if an incorrect path is entered", () => {
+    return request(app)
+      .get("/api/notreviews")
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("404 path not found!");
       });
   });
 });
