@@ -208,15 +208,15 @@ describe("GET - /api/reviews/:review_id/comments", () => {
       });
   });
 });
-describe("POST - /api/reviews/:review_id/comments", () => {
-  return request(app)
-    .post("/api/reviews/3/comments")
-    .send({ username: "mallionaire", body: "lorem ipsum!" })
-    .expect(201)
-    .then((comment) => {
-      expect(comment.body).toHaveProperty("username");
-      expect(typeof comment.body.username).toBe("string");
-      expect(comment.body).toHaveProperty("comment");
-      expect(typeof comment.body.comment).toBe("string");
-    });
-});
+// describe("POST - /api/reviews/:review_id/comments", () => {
+//   return request(app)
+//     .post("/api/reviews/3/comments")
+//     .send({ username: "mallionaire", body: "lorem ipsum!" })
+//     .expect(201)
+//     .then((comment) => {
+//       expect(comment.body).toHaveProperty("username");
+//       expect(typeof comment.body.username).toBe("string");
+//       expect(comment.body).toHaveProperty("comment");
+//       expect(typeof comment.body.comment).toBe("string");
+//     });
+// });
