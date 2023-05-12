@@ -8,6 +8,7 @@ const {
 const { getEndpoints } = require("./controllers/endpoints.controllers.js");
 const {
   getCommentsByReviewId,
+  postCommentByReviewId,
 } = require("./controllers/comments.controllers.js");
 const app = express();
 
@@ -20,6 +21,7 @@ app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewsById);
 
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
+app.post("/api/reviews/:review_id/comments", postCommentByReviewId);
 
 app.get("/api", getEndpoints);
 

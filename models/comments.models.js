@@ -28,10 +28,20 @@ exports.createCommentByReviewId = (reviewId, comment) => {
         msg: "404 - no such review ID found, please use an existing review ID to post a comment"
       });
     }
-    const { author, body } = comment
+    const author = comment.username
+    const body = comment.body
+    if (typeof author !== "string"){
+      return Promise.reject({status: 400, msg: "400 - Bad Request!"})
+    }
+    if (typeof body !== "string"){
+     return Promise.reject({status: 400, msg: "400 - Bad Request!"})
+    }
     return db
     .query(`
     INSERT INTO comments
-    (author, body)
-    VALUES`)
+    (author, body, review_id)
+    VALUES ($1, $2, $3) RETURNING *`, [author, body, reviewId])
+    .then((response) => {
+      return response.rows[0]
+    })
 })}

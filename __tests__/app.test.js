@@ -208,15 +208,38 @@ describe("GET - /api/reviews/:review_id/comments", () => {
       });
   });
 });
-// describe("POST - /api/reviews/:review_id/comments", () => {
-//   return request(app)
-//     .post("/api/reviews/3/comments")
-//     .send({ username: "mallionaire", body: "lorem ipsum!" })
-//     .expect(201)
-//     .then((comment) => {
-//       expect(comment.body).toHaveProperty("username");
-//       expect(typeof comment.body.username).toBe("string");
-//       expect(comment.body).toHaveProperty("comment");
-//       expect(typeof comment.body.comment).toBe("string");
-//     });
-// });
+describe("POST - /api/reviews/:review_id/comments", () => {
+  test("should return a 201 along with the posted comment", () => {
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send({ username: "mallionaire", body: "lorem ipsum!" })
+      .expect(201)
+      .then((comment) => {
+        expect(comment.body.comment).toHaveProperty("author");
+        expect(typeof comment.body.comment.author).toBe("string");
+        expect(comment.body.comment).toHaveProperty("body");
+        expect(typeof comment.body.comment.body).toBe("string");
+      });
+  });
+  test("should return a 404 if the review ID added doesnt exist", () => {
+    return request(app)
+      .post("/api/reviews/45/comments")
+      .send({ username: "mallionaire", body: "lorem ipsum!" })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "404 - no such review ID found, please use an existing review ID to post a comment"
+        );
+      });
+  });
+ 
+  test("should return a 400 if the wrong values are sent in the post request", () => {
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send({ username: 34, body: 54 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("400 - Bad Request!");
+      });
+  });
+});
