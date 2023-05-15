@@ -1,4 +1,11 @@
 const db = require("../db/connection.js");
+const {
+  checkReviewIdExists,
+  checkUsernameExists,
+  checkDataisString,
+  createQuery,
+  checkKeysExist,
+} = require("../utilities.js");
 
 exports.fetchCommentsByReviewID = (reviewId) => {
   return db
@@ -17,31 +24,20 @@ exports.fetchCommentsByReviewID = (reviewId) => {
 };
 
 exports.createCommentByReviewId = (reviewId, comment) => {
-  return db
-  .query(`SELECT * FROM reviews WHERE review_id = $1`, [
-    reviewId,
-  ])
-  .then((review) => {
-    if (review.rows.length === 0) {
-      return Promise.reject({
-        status: 404,
-        msg: "404 - no such review ID found, please use an existing review ID to post a comment"
-      });
-    }
-    const author = comment.username
-    const body = comment.body
-    if (typeof author !== "string"){
-      return Promise.reject({status: 400, msg: "400 - Bad Request!"})
-    }
-    if (typeof body !== "string"){
-     return Promise.reject({status: 400, msg: "400 - Bad Request!"})
-    }
-    return db
-    .query(`
-    INSERT INTO comments
-    (author, body, review_id)
-    VALUES ($1, $2, $3) RETURNING *`, [author, body, reviewId])
-    .then((response) => {
-      return response.rows[0]
-    })
-})}
+  const author = comment.username;
+  const body = comment.body;
+  const reviewIdCheck = checkReviewIdExists(reviewId);
+  const usernameCheck = checkUsernameExists(author);
+  const checkString = checkDataisString(author, body);
+  const checkKeys = checkKeysExist(comment);
+  return Promise.all([
+    reviewIdCheck,
+    usernameCheck,
+    checkKeys,
+    checkString,
+  ]).then(() => {
+    return createQuery(author, body, reviewId).then((comment) => {
+      return comment.rows[0];
+    });
+  });
+};

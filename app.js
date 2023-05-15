@@ -10,6 +10,7 @@ const {
   getCommentsByReviewId,
   postCommentByReviewId,
 } = require("./controllers/comments.controllers.js");
+const utilityFunctions = require("./utilities.js")
 const app = express();
 
 app.use(express.json());
@@ -36,6 +37,7 @@ app.use((err, request, response, next) => {
     next(err);
   }
 });
+
 
 app.use((err, request, response, next) => {
   if (err.status && err.msg) {
