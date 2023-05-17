@@ -1,4 +1,11 @@
 const db = require("../db/connection.js");
+const {
+  checkReviewIdExists,
+  checkUsernameExists,
+  checkDataisString,
+  createQuery,
+  checkKeysExist,
+} = require("../utilities.js");
 
 exports.fetchCommentsByReviewID = (reviewId) => {
   return db
@@ -14,4 +21,23 @@ exports.fetchCommentsByReviewID = (reviewId) => {
       }
       return comments.rows;
     });
+};
+
+exports.createCommentByReviewId = (reviewId, comment) => {
+  const author = comment.username;
+  const body = comment.body;
+  const reviewIdCheck = checkReviewIdExists(reviewId);
+  const usernameCheck = checkUsernameExists(author);
+  const checkString = checkDataisString(author, body);
+  const checkKeys = checkKeysExist(comment);
+  return Promise.all([
+    reviewIdCheck,
+    usernameCheck,
+    checkKeys,
+    checkString,
+  ]).then(() => {
+    return createQuery(author, body, reviewId).then((comment) => {
+      return comment.rows[0];
+    });
+  });
 };

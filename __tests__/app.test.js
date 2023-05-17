@@ -208,7 +208,79 @@ describe("GET - /api/reviews/:review_id/comments", () => {
       });
   });
 });
+describe("POST - /api/reviews/:review_id/comments", () => {
+  test("should return a 201 along with the posted comment", () => {
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send({
+        username: "mallionaire",
+        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id pulvinar urna",
+      })
+      .expect(201)
+      .then((comment) => {
+        const returnedComment = comment.body.comment;
+        expect(returnedComment.author).toBe("mallionaire");
+        expect(returnedComment.body).toBe(
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id pulvinar urna"
+        );
+      });
+  });
+  test("should return a 404 if the review ID added doesnt exist", () => {
+    return request(app)
+      .post("/api/reviews/45/comments")
+      .send({
+        username: "mallionaire",
+        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id pulvinar urna.",
+      })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(
+          "404 - no such review ID found, please use an existing review ID to post a comment"
+        );
+      });
+  });
+  test("should return a 404 if the username in the request does not exist in the users database", () => {
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send({
+        username: "lailacase",
+        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id pulvinar urna.",
+      })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("404 - Invalid username!");
+      });
+  });
 
-describe('POST - /api/reviews/:review_id/comments', () => {
-  
+  test("should return a 400 if the wrong values are sent in the post request", () => {
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send({ username: 34, body: 54 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("400 - Bad Request!");
+      });
+  });
+
+
+  test("should return a 400 if the review id that is passed is an invalid data type", () => {
+    return request(app)
+      .post("/api/reviews/notanid/comments")
+      .send({ username: "mallionaire", body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id pulvinar urna." })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("400 - Bad Request!");
+      });
+  });
+
+  test("should return a 400 if the keys on the request do not match 'username' and 'body'", () => {
+    return request(app)
+      .post("/api/reviews/3/comments")
+      .send({ notusername: "mallionaire", notbody: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id pulvinar urna." })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("400 - Bad Request!");
+      });
+  });
+
 });
