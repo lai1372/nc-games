@@ -14,10 +14,7 @@ exports.fetchCommentsByReviewID = (reviewId) => {
     ])
     .then((comments) => {
       if (comments.rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "404 - no comments found with this review ID",
-        });
+        return Promise.reject()
       }
       return comments.rows;
     });

@@ -2,15 +2,18 @@
 
 
 -- SELECT * FROM categories;
-SELECT * FROM reviews;
+-- SELECT * FROM reviews;
+-- -- SELECT * FROM users;
+-- -- SELECT * from comments;
+
+-- SELECT * FROM comments;
+
 -- SELECT * FROM users;
--- SELECT * from comments;
 
-SELECT * FROM comments;
+-- SELECT * FROM reviews;
 
-SELECT * FROM users;
+-- SELECT * FROM categories;
 
-SELECT * FROM reviews;
+UPDATE reviews SET votes = votes + 10 WHERE review_id = 5;
 
-SELECT * FROM categories;
-
+SELECT * from reviews;

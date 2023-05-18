@@ -5,7 +5,7 @@ exports.fetchReviewsById = (reviewId) => {
     .query(`SELECT * FROM reviews WHERE review_id = $1`, [reviewId])
     .then((result) => {
       if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "ID not found!" });
+        return Promise.reject();
       }
       return result.rows[0];
     });
@@ -18,10 +18,24 @@ exports.fetchReviews = () => {
     )
     .then((reviews) => {
       if (reviews.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "No reviews found!" });
+        return Promise.reject();
       }
       return reviews.rows;
     });
 };
 
-
+exports.updateReviewsById = (votes, reviewId) => {
+  const newVoteNumber = votes;
+  const reviewNumber = reviewId;
+  return db
+    .query(
+      `UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING*`,
+      [newVoteNumber, reviewNumber]
+    )
+    .then((reviews) => {
+      if (reviews.rows.length === 0){
+        return Promise.reject()
+      }
+      return reviews.rows[0];
+    });
+};
