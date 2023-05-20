@@ -14,4 +14,4 @@
 
 -- SELECT * FROM categories;
 
-SELECT * from reviews;
+SELECT * from comments where comment_id = 1;

@@ -398,3 +398,32 @@ describe("PATCH - /api/reviews/:review_id", () => {
       });
   });
 });
+
+describe("DELETE - /api/comments/:comment_id", () => {
+  test("should return a 200 status with no reponse when deleted", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then((response) => {
+        expect(response.body).toEqual({});
+      });
+  });
+
+  test("should return a 404 error if the ID doesnt exist", () => {
+    return request(app)
+      .delete("/api/comments/100")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("404 - Path not found!");
+      });
+  });
+
+  test("should return a 400 error if the ID data type is incorrect", () => {
+    return request(app)
+      .delete("/api/comments/notanid")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("400 - Bad Request!");
+      });
+  });
+});

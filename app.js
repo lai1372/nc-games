@@ -9,6 +9,7 @@ const { getEndpoints } = require("./controllers/endpoints.controllers.js");
 const {
   getCommentsByReviewId,
   postCommentByReviewId,
+  removeCommentById,
 } = require("./controllers/comments.controllers.js");
 const app = express();
 
@@ -24,6 +25,8 @@ app.post("/api/reviews/:review_id/comments", postCommentByReviewId);
 app.patch("/api/reviews/:review_id", patchReviewsById);
 
 app.get("/api", getEndpoints);
+
+app.delete("/api/comments/:comment_id", removeCommentById)
 
 app.all("*", (request, response) => {
   response.status(404).send({ msg: "404 - Path not found!" });

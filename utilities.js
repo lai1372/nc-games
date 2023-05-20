@@ -53,6 +53,12 @@ exports.checkKeysExist = (comment) => {
   }
 };
 
-exports.checkPatchKeys = (patchObject) => {
-
+exports.checkCommentIdExists = (commentId) => {
+  return db
+    .query(`SELECT * FROM comments WHERE comment_id = $1`, [commentId])
+    .then((comments) => {
+      if (comments.rows.length === 0 && commentId) {
+        return Promise.reject({ status: 404, msg: "404 - Path not found!" });
+      }
+    });
 };

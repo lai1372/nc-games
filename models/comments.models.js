@@ -5,6 +5,7 @@ const {
   checkDataisString,
   createQuery,
   checkKeysExist,
+  checkCommentIdExists,
 } = require("../utilities.js");
 
 exports.fetchCommentsByReviewID = (reviewId) => {
@@ -38,3 +39,14 @@ exports.createCommentByReviewId = (reviewId, comment) => {
     });
   });
 };
+
+exports.deleteCommentById = (commentId) => {
+  return checkCommentIdExists(commentId)
+  .then(()=>{
+    return db
+    .query(`DELETE FROM comments WHERE comment_id = $1`, [commentId])
+    .then(()=>{
+      return 
+    })
+  })
+}
