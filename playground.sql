@@ -14,6 +14,4 @@
 
 -- SELECT * FROM categories;
 
-UPDATE reviews SET votes = votes + 10 WHERE review_id = 5;
-
 SELECT * from reviews;

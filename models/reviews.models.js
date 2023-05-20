@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const { checkPatchKeys } = require("../utilities.js");
 
 exports.fetchReviewsById = (reviewId) => {
   return db
@@ -25,7 +26,10 @@ exports.fetchReviews = () => {
 };
 
 exports.updateReviewsById = (votes, reviewId) => {
-  const newVoteNumber = votes;
+  if (!votes.inc_votes) {
+    return Promise.reject({ status: 400, msg: "400 - Bad Request!" });
+  }
+  const newVoteNumber = votes.inc_votes;
   const reviewNumber = reviewId;
   return db
     .query(
@@ -33,8 +37,19 @@ exports.updateReviewsById = (votes, reviewId) => {
       [newVoteNumber, reviewNumber]
     )
     .then((reviews) => {
-      if (reviews.rows.length === 0){
-        return Promise.reject()
+      if (reviews.rows.length === 0) {
+        return Promise.reject();
+      }
+      if (reviews.rows[0].votes < 0) {
+        reviews.rows[0].votes = 0;
+        return db
+          .query(`UPDATE reviews SET votes = $1 WHERE review_id = $2`, [
+            0,
+            reviewId,
+          ])
+          .then(() => {
+            return reviews.rows[0];
+          });
       }
       return reviews.rows[0];
     });

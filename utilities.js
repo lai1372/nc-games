@@ -52,3 +52,7 @@ exports.checkKeysExist = (comment) => {
     return Promise.reject({ status: 400, msg: "400 - Bad Request!" });
   }
 };
+
+exports.checkPatchKeys = (patchObject) => {
+
+};

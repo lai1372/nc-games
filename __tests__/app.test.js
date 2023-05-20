@@ -311,6 +311,53 @@ describe("PATCH - /api/reviews/:review_id", () => {
         });
       });
   });
+
+  test("should work with decreasing values when provided with a minus number", () => {
+    return request(app)
+      .patch("/api/reviews/5")
+      .send({ inc_votes: -2 })
+      .expect(200)
+      .then((response) => {
+        const updatedReview = response.body.updated_review;
+        expect(updatedReview).toEqual({
+          review_id: 5,
+          title: "Proident tempor et.",
+          category: "social deduction",
+          designer: "Seymour Buttz",
+          owner: "mallionaire",
+          review_body:
+            "Labore occaecat sunt qui commodo anim anim aliqua adipisicing aliquip fugiat. Ad in ipsum incididunt esse amet deserunt aliqua exercitation occaecat nostrud irure labore ipsum. Culpa tempor non voluptate reprehenderit deserunt pariatur cupidatat aliqua adipisicing. Nostrud labore dolor fugiat sint consequat excepteur dolore irure eu. Anim ex adipisicing magna deserunt enim fugiat do nulla officia sint. Ex tempor ut aliquip exercitation eiusmod. Excepteur deserunt officia voluptate sunt aliqua esse deserunt velit. In id non proident veniam ipsum id in consequat duis ipsum et incididunt. Qui cupidatat ea deserunt magna proident nisi nulla eiusmod aliquip magna deserunt fugiat fugiat incididunt. Laboris nisi velit mollit ullamco deserunt eiusmod deserunt ea dolore veniam.",
+          review_img_url:
+            "https://images.pexels.com/photos/209728/pexels-photo-209728.jpeg?w=700&h=700",
+          created_at: "2021-01-07T09:06:08.077Z",
+          votes: 3,
+        });
+      });
+  });
+
+  test("should set the votes to 0 if the number provided is greater than the amount of votes", () => {
+    return request(app)
+      .patch("/api/reviews/5")
+      .send({ inc_votes: -20 })
+      .expect(200)
+      .then((response) => {
+        const updatedReview = response.body.updated_review;
+        expect(updatedReview).toEqual({
+          review_id: 5,
+          title: "Proident tempor et.",
+          category: "social deduction",
+          designer: "Seymour Buttz",
+          owner: "mallionaire",
+          review_body:
+            "Labore occaecat sunt qui commodo anim anim aliqua adipisicing aliquip fugiat. Ad in ipsum incididunt esse amet deserunt aliqua exercitation occaecat nostrud irure labore ipsum. Culpa tempor non voluptate reprehenderit deserunt pariatur cupidatat aliqua adipisicing. Nostrud labore dolor fugiat sint consequat excepteur dolore irure eu. Anim ex adipisicing magna deserunt enim fugiat do nulla officia sint. Ex tempor ut aliquip exercitation eiusmod. Excepteur deserunt officia voluptate sunt aliqua esse deserunt velit. In id non proident veniam ipsum id in consequat duis ipsum et incididunt. Qui cupidatat ea deserunt magna proident nisi nulla eiusmod aliquip magna deserunt fugiat fugiat incididunt. Laboris nisi velit mollit ullamco deserunt eiusmod deserunt ea dolore veniam.",
+          review_img_url:
+            "https://images.pexels.com/photos/209728/pexels-photo-209728.jpeg?w=700&h=700",
+          created_at: "2021-01-07T09:06:08.077Z",
+          votes: 0,
+        });
+      });
+  });
+
   test("should return a 404 error if the review ID provided does not exist", () => {
     return request(app)
       .patch("/api/reviews/29")
@@ -318,6 +365,36 @@ describe("PATCH - /api/reviews/:review_id", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("404 - Path not found!");
+      });
+  });
+
+  test("should return a 400 error if the review ID is not the correct data type", () => {
+    return request(app)
+      .patch("/api/reviews/notanid")
+      .send({ inc_votes: 10 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("400 - Bad Request!");
+      });
+  });
+
+  test("should return a 400 error if the sent value is the incorrect data type", () => {
+    return request(app)
+      .patch("/api/reviews/notanid")
+      .send({ inc_votes: "notvotes" })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("400 - Bad Request!");
+      });
+  });
+
+  test("should return a 400 error if the key in the patch request doesn't match 'inc_votes'", () => {
+    return request(app)
+      .patch("/api/reviews/5")
+      .send({ notinc_votes: 10 })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("400 - Bad Request!");
       });
   });
 });
