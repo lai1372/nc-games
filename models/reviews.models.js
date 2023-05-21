@@ -1,5 +1,4 @@
 const db = require("../db/connection.js");
-const { checkPatchKeys } = require("../utilities.js");
 
 exports.fetchReviewsById = (reviewId) => {
   return db

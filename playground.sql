@@ -8,10 +8,10 @@
 
 -- SELECT * FROM comments;
 
--- SELECT * FROM users;
+SELECT * FROM users;
 
 -- SELECT * FROM reviews;
 
 -- SELECT * FROM categories;
 
-SELECT * from comments where comment_id = 1;
+-- SELECT * from comments where comment_id = 1;

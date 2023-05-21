@@ -6,6 +6,7 @@ const db = require("../db/connection.js");
 const { expect, test } = require("@jest/globals");
 const endpoints = require("../endpoints.json");
 const jestSorted = require("jest-sorted");
+const users = require("../db/data/test-data/users.js");
 
 beforeEach(() => {
   return seed(data);
@@ -425,5 +426,29 @@ describe("DELETE - /api/comments/:comment_id", () => {
       .then((response) => {
         expect(response.body.msg).toBe("400 - Bad Request!");
       });
+  });
+});
+
+describe('GET - /api/users', () => {
+  test('should return a status 200 with a full list of users', () => {
+    return request(app)
+    .get("/api/users")
+    .expect(200)
+    .then((users) => {
+      const usersArray = users.body.users
+      usersArray.map((user) => {
+        expect(typeof user.username).toBe("string")
+        expect(typeof user.name).toBe("string")
+        expect(typeof user.avatar_url).toBe("string")
+      })
+    })
+  });
+  test('should return a 404 error if the wrong url is typed', () => {
+    return request(app)
+    .get("/api/user")
+    .expect(404)
+    .then((response) => {
+      expect(response.body.msg).toBe("404 - Path not found!")
+    })
   });
 });
