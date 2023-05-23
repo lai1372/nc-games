@@ -1,3 +1,4 @@
+const { query } = require("../db/connection");
 const {
   fetchReviewsById,
   fetchReviews,
@@ -16,6 +17,17 @@ exports.getReviewsById = (request, response, next) => {
 };
 
 exports.getReviews = (request, response, next) => {
+  const validQueries = ["category", "sort_by", "order"];
+
+  if (Object.values(request.query).length > 0) {
+    fetchReviews(request.query)
+      .then((queriedReviews) => {
+        response.status(200).send({ filtered_reviews: queriedReviews });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
   fetchReviews()
     .then((reviews) => {
       response.status(200).send({ reviews: reviews });
@@ -27,12 +39,12 @@ exports.getReviews = (request, response, next) => {
 
 exports.patchReviewsById = (request, response, next) => {
   const reviewId = request.params.review_id;
-  const votes = request.body
+  const votes = request.body;
   updateReviewsById(votes, reviewId)
-  .then((updatedReview)=>{
-    response.status(200).send({updated_review: updatedReview})
-  })
-  .catch((err) =>{
-    next(err)
-  });
+    .then((updatedReview) => {
+      response.status(200).send({ updated_review: updatedReview });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

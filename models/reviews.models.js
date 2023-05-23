@@ -11,7 +11,47 @@ exports.fetchReviewsById = (reviewId) => {
     });
 };
 
-exports.fetchReviews = () => {
+exports.fetchReviews = (query) => {
+  if (query) {
+    if (query.category) {
+      return db
+        .query(
+          `SELECT * FROM reviews WHERE category = $1
+      `,
+          [query.category]
+        )
+        .then((reviewsByCategory) => {
+          if (reviewsByCategory.rows.length === 0) {
+            return Promise.reject();
+          }
+          return reviewsByCategory.rows;
+        });
+    }
+    if (Object.keys(query)[0] === "sort_by") {
+      if (query.sort_by = ' ') {
+        return db
+          .query(`SELECT * FROM reviews ORDER BY created_at DESC`)
+          .then((sortedReviews) => {
+            if (sortedReviews.rows.length === 0) {
+              return Promise.reject();
+            }
+            return sortedReviews.rows;
+          });
+      } else {
+        
+      }
+    }
+    // if (query.order){
+    //   return db
+    //   .query(`SELECT reviews.review_id, reviews.title, reviews.category, reviews.designer, reviews.owner, reviews.review_img_url, reviews.created_at, reviews.votes, CAST (COUNT (comments.comment_id) AS INT) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id GROUP BY reviews.review_id ORDER BY $1;`, [query])
+    //   .then((orderedReviews) => {
+    //     if (orderedReviews.rows.length === 0) {
+    //       return Promise.reject();
+    //     }
+    //     return orderedReviews.rows;
+    //   });
+    // }
+  }
   return db
     .query(
       `SELECT reviews.review_id, reviews.title, reviews.category, reviews.designer, reviews.owner, reviews.review_img_url, reviews.created_at, reviews.votes, CAST (COUNT (comments.comment_id) AS INT) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id GROUP BY reviews.review_id ORDER BY created_at DESC;`

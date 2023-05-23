@@ -6,7 +6,6 @@ const db = require("../db/connection.js");
 const { expect, test } = require("@jest/globals");
 const endpoints = require("../endpoints.json");
 const jestSorted = require("jest-sorted");
-const users = require("../db/data/test-data/users.js");
 
 beforeEach(() => {
   return seed(data);
@@ -429,26 +428,70 @@ describe("DELETE - /api/comments/:comment_id", () => {
   });
 });
 
-describe('GET - /api/users', () => {
-  test('should return a status 200 with a full list of users', () => {
+describe("GET - /api/users", () => {
+  test("should return a status 200 with a full list of users", () => {
     return request(app)
-    .get("/api/users")
-    .expect(200)
-    .then((users) => {
-      const usersArray = users.body.users
-      usersArray.map((user) => {
-        expect(typeof user.username).toBe("string")
-        expect(typeof user.name).toBe("string")
-        expect(typeof user.avatar_url).toBe("string")
-      })
-    })
+      .get("/api/users")
+      .expect(200)
+      .then((users) => {
+        const usersArray = users.body.users;
+        usersArray.map((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
+      });
   });
-  test('should return a 404 error if the wrong url is typed', () => {
+  test("should return a 404 error if the wrong url is typed", () => {
     return request(app)
-    .get("/api/user")
-    .expect(404)
-    .then((response) => {
-      expect(response.body.msg).toBe("404 - Path not found!")
-    })
+      .get("/api/user")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("404 - Path not found!");
+      });
+  });
+});
+
+describe("GET - /api/reviews (queries)", () => {
+  test("should respond with a status 200 and show reviews by category selected", () => {
+    return request(app)
+      .get("/api/reviews?category=social%20deduction")
+      .expect(200)
+      .then((filteredReviewsResponse) => {
+        const filteredReviews = filteredReviewsResponse.body.filtered_reviews;
+        expect(filteredReviews.length).toBe(11);
+        filteredReviews.map((review) => {
+          expect(typeof review.review_id).toBe("number");
+          expect(typeof review.title).toBe("string");
+          expect(typeof review.designer).toBe("string");
+          expect(typeof review.owner).toBe("string");
+          expect(typeof review.review_body).toBe("string");
+          expect(typeof review.review_img_url).toBe("string");
+          expect(typeof review.created_at).toBe("string");
+          expect(typeof review.votes).toBe("number");
+        });
+      });
+  });
+  test('should return a 200 status and sort by date by default when using the "sort_by" query', () => {
+    return request(app)
+      .get("/api/reviews?sort_by")
+      .expect(200)
+      .then((sortedReviewsResponse) => {
+        const sortedReviews = sortedReviewsResponse.body.filtered_reviews;
+        console.log(sortedReviews)
+        expect(sortedReviews.length).toBe(13);
+        expect(sortedReviews).toBeSortedBy("created_at", { descending: true });
+        console.log(sortedReviews)
+        sortedReviews.map((review) => {
+          expect(typeof review.review_id).toBe("number");
+          expect(typeof review.title).toBe("string");
+          expect(typeof review.designer).toBe("string");
+          expect(typeof review.owner).toBe("string");
+          expect(typeof review.review_body).toBe("string");
+          expect(typeof review.review_img_url).toBe("string");
+          expect(typeof review.created_at).toBe("string");
+          expect(typeof review.votes).toBe("number");
+        });
+      });
   });
 });
