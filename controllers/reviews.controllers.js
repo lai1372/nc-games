@@ -17,8 +17,6 @@ exports.getReviewsById = (request, response, next) => {
 };
 
 exports.getReviews = (request, response, next) => {
-  const validQueries = ["category", "sort_by", "order"];
-
   if (Object.values(request.query).length > 0) {
     fetchReviews(request.query)
       .then((queriedReviews) => {

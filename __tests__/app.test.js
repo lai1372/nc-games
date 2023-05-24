@@ -478,10 +478,8 @@ describe("GET - /api/reviews (queries)", () => {
       .expect(200)
       .then((sortedReviewsResponse) => {
         const sortedReviews = sortedReviewsResponse.body.filtered_reviews;
-        console.log(sortedReviews)
         expect(sortedReviews.length).toBe(13);
         expect(sortedReviews).toBeSortedBy("created_at", { descending: true });
-        console.log(sortedReviews)
         sortedReviews.map((review) => {
           expect(typeof review.review_id).toBe("number");
           expect(typeof review.title).toBe("string");
@@ -492,6 +490,13 @@ describe("GET - /api/reviews (queries)", () => {
           expect(typeof review.created_at).toBe("string");
           expect(typeof review.votes).toBe("number");
         });
+      });
+  });
+  test('should return a 404 status when searching an invalid sort query of the correct data type', () => {
+    return request(app)
+      .get("/api/reviews?sort_by=hi")
+      .expect(404)
+      .then((response) => {
       });
   });
 });

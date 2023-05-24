@@ -1,3 +1,4 @@
+const { Query } = require("pg");
 const db = require("../db/connection.js");
 
 exports.fetchReviewsById = (reviewId) => {
@@ -14,6 +15,10 @@ exports.fetchReviewsById = (reviewId) => {
 exports.fetchReviews = (query) => {
   if (query) {
     if (query.category) {
+      const validCategories = ["push-your-luck", "roll-and-write", "strategy", "deck-building", "hidden-roles", "dexterity", "engine-building", "social deduction", "euro game"]
+      if (!validCategories.includes(query.category)) {
+        return Promise.reject()
+      }
       return db
         .query(
           `SELECT * FROM reviews WHERE category = $1
@@ -28,17 +33,29 @@ exports.fetchReviews = (query) => {
         });
     }
     if (Object.keys(query)[0] === "sort_by") {
-      if (query.sort_by = ' ') {
+      const validSortByQueries = ["title", "created_at", "votes"]
+      if (query.sort_by === '') {
         return db
-          .query(`SELECT * FROM reviews ORDER BY created_at DESC`)
-          .then((sortedReviews) => {
-            if (sortedReviews.rows.length === 0) {
+        .query(`SELECT * FROM reviews ORDER BY created_at DESC`)
+        .then((sortedReviews) => {
+          if (sortedReviews.rows.length === 0) {
+            return Promise.reject();
+          }
+          return sortedReviews.rows;
+        });
+      } else {
+        if (!validSortByQueries.contains(query.sort_by)){
+            return Promise.reject()
+          }
+          return db
+          .query(`SELECT * FROM reviews ORDER BY $1`, [query.sort_by])
+          .then((orderedReviews) => {
+            if (orderedReviews.rows.length === 0) {
               return Promise.reject();
             }
-            return sortedReviews.rows;
-          });
-      } else {
-        
+            return orderedReviews.rows
+          })
+        }
       }
     }
     // if (query.order){
@@ -50,19 +67,18 @@ exports.fetchReviews = (query) => {
     //     }
     //     return orderedReviews.rows;
     //   });
-    // }
+    // // }
+    return db
+      .query(
+        `SELECT reviews.review_id, reviews.title, reviews.category, reviews.designer, reviews.owner, reviews.review_img_url, reviews.created_at, reviews.votes, CAST (COUNT (comments.comment_id) AS INT) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id GROUP BY reviews.review_id ORDER BY created_at DESC;`
+      )
+      .then((reviews) => {
+        if (reviews.rows.length === 0) {
+          return Promise.reject();
+        }
+        return reviews.rows;
+      });
   }
-  return db
-    .query(
-      `SELECT reviews.review_id, reviews.title, reviews.category, reviews.designer, reviews.owner, reviews.review_img_url, reviews.created_at, reviews.votes, CAST (COUNT (comments.comment_id) AS INT) AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id GROUP BY reviews.review_id ORDER BY created_at DESC;`
-    )
-    .then((reviews) => {
-      if (reviews.rows.length === 0) {
-        return Promise.reject();
-      }
-      return reviews.rows;
-    });
-};
 
 exports.updateReviewsById = (votes, reviewId) => {
   if (!votes.inc_votes) {

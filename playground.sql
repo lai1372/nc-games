@@ -1,4 +1,4 @@
-\c nc_games
+\c nc_games_test
 
 
 -- SELECT * FROM categories;
@@ -10,7 +10,8 @@
 
 -- SELECT * FROM users;
 
-SELECT * FROM reviews ORDER BY created_at DESC
+SELECT * FROM reviews ORDER BY title
+
 
 -- SELECT * FROM categories;
 
