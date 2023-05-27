@@ -472,6 +472,16 @@ describe("GET - /api/reviews (queries)", () => {
         });
       });
   });
+
+  test("should respond with a status 404 if the category doesnt exist", () => {
+    return request(app)
+      .get("/api/reviews?category=strawberries")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("404 - Path not found!")
+      });
+  });
+
   test('should return a 200 status and sort by date by default when using the "sort_by" query', () => {
     return request(app)
       .get("/api/reviews?sort_by")
@@ -490,13 +500,6 @@ describe("GET - /api/reviews (queries)", () => {
           expect(typeof review.created_at).toBe("string");
           expect(typeof review.votes).toBe("number");
         });
-      });
-  });
-  test('should return a 404 status when searching an invalid sort query of the correct data type', () => {
-    return request(app)
-      .get("/api/reviews?sort_by=hi")
-      .expect(404)
-      .then((response) => {
       });
   });
 });

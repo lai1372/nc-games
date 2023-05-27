@@ -62,3 +62,10 @@ exports.checkCommentIdExists = (commentId) => {
       }
     });
 };
+
+exports.checkValidQueries = (queryString) => {
+  const validSortByQueries = ["title", "created_at", "votes"];
+  if (!validSortByQueries.includes(queryString)) {
+    return Promise.reject();
+  }
+};
