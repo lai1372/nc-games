@@ -13,7 +13,9 @@ const {
 } = require("./controllers/comments.controllers.js");
 const { getUsers } = require("./controllers/users.controllers.js");
 const app = express();
+const cors = require('cors');
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api/categories", getCategories);
