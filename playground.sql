@@ -6,11 +6,11 @@
 -- -- SELECT * FROM users;
 -- -- SELECT * from comments;
 
--- SELECT * FROM comments;
+SELECT * FROM reviews;
 
 -- SELECT * FROM users;
 
-SELECT * FROM reviews ORDER BY title
+SELECT * FROM comments;
 
 
 -- SELECT * FROM categories;

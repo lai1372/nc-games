@@ -16,7 +16,7 @@
   },
   "GET /api/reviews": {
     "description": "serves an array of all reviews",
-    "queries": ["category", "sort_by", "order"],
+    "queries": [],
     "exampleResponse": {
       "reviews": [
         {
@@ -32,9 +32,10 @@
       ]
     }
   },
+  
   "GET /api/comments": {
     "description": "serves an array of all comments",
-    "queries": ["sort_by", "author"],
+    "queries": [],
     "exampleResponse": {
       "comments": [
         {
@@ -50,7 +51,7 @@
 
   "GET /api/users": {
     "description": "serves an array of all users",
-    "queries": ["name", "username"],
+    "queries": [],
     "exampleResponse": {
       "comments": [
         {

@@ -189,12 +189,12 @@ describe("GET - /api/reviews/:review_id/comments", () => {
         expect(comments.body.comments).toBeSortedBy("created_at");
       });
   });
-  test("should return a 404 error if the correct data type for review ID is added, but there are no corresponding comments", () => {
+  test("should return a 200 statius if existing review ID is added, but there are no corresponding comments", () => {
     return request(app)
-      .get("/api/reviews/21/comments")
-      .expect(404)
+      .get("/api/reviews/8/comments")
+      .expect(200)
       .then((response) => {
-        expect(response.body.msg).toBe("404 - Path not found!");
+        expect(response.body.comments).toEqual([]);
       });
   });
   test("should return a 400 error if the data type for review ID is invalid", () => {

@@ -15,7 +15,7 @@ exports.fetchCommentsByReviewID = (reviewId) => {
     ])
     .then((comments) => {
       if (comments.rows.length === 0) {
-        return Promise.reject()
+        return comments.rows;
       }
       return comments.rows;
     });
@@ -41,12 +41,11 @@ exports.createCommentByReviewId = (reviewId, comment) => {
 };
 
 exports.deleteCommentById = (commentId) => {
-  return checkCommentIdExists(commentId)
-  .then(()=>{
+  return checkCommentIdExists(commentId).then(() => {
     return db
-    .query(`DELETE FROM comments WHERE comment_id = $1`, [commentId])
-    .then(()=>{
-      return 
-    })
-  })
-}
+      .query(`DELETE FROM comments WHERE comment_id = $1`, [commentId])
+      .then(() => {
+        return;
+      });
+  });
+};
