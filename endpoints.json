@@ -87,8 +87,12 @@
   },
 
   "POST /api/reviews/:review_id/comments": {
-    "description": "serves an object with comment posted",
+    "description": "serves an object with comment posted, requires an object",
     "queries": [],
+    "example input": {
+      "username": "mallionaire",
+      "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id pulvinar urna"
+    },
     "example response": {
       "comment": {
         "comment_id": 7,
