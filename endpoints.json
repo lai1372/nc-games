@@ -121,11 +121,15 @@
     }
   },
 
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes comment by the comment id provided, sends no response"
+  },
+
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],
     "exampleResponse": {
-      "comments": [
+      "users": [
         {
           "username": "tickle122",
           "name": "Tom Tickle",

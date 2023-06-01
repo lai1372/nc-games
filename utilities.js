@@ -28,9 +28,11 @@ exports.checkUsernameExists = (username) => {
 
 exports.checkDataisString = (author, body) => {
   if (typeof author !== "string" && author) {
+    console.log("author data")
     return Promise.reject({ status: 400, msg: "400 - Bad Request!" });
   }
   if (typeof body !== "string" && body) {
+    console.log("body data")
     return Promise.reject({ status: 400, msg: "400 - Bad Request!" });
   }
 };
