@@ -25,14 +25,15 @@ exports.getReviews = (request, response, next) => {
       .catch((err) => {
         next(err);
       });
+  } else {
+    fetchReviews()
+      .then((reviews) => {
+        response.status(200).send({ reviews: reviews });
+      })
+      .catch((err) => {
+        next(err);
+      });
   }
-  fetchReviews()
-    .then((reviews) => {
-      response.status(200).send({ reviews: reviews });
-    })
-    .catch((err) => {
-      next(err);
-    });
 };
 
 exports.patchReviewsById = (request, response, next) => {
